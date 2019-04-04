@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web.Http;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SimonsVossSearchPrototype;
@@ -20,13 +21,10 @@ namespace SimonsVossSearchPrototype.Tests.Controllers
             LocksController controller = new LocksController();
 
             // Act
-            IEnumerable<string> result = controller.Get();
+            var result = controller.Get();
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(2, result.Count());
-            Assert.AreEqual("value1", result.ElementAt(0));
-            Assert.AreEqual("value2", result.ElementAt(1));
         }
 
         [TestMethod]
@@ -36,46 +34,24 @@ namespace SimonsVossSearchPrototype.Tests.Controllers
             LocksController controller = new LocksController();
 
             // Act
-            string result = controller.Get(5);
+            var result = controller.Get(Guid.Parse("0cccab2b-bc8d-44c5-b248-8a9ca6d7e899"));
 
             // Assert
-            Assert.AreEqual("value", result);
+            Assert.IsNotNull(result);
         }
 
         [TestMethod]
-        public void Post()
+        public void Search()
         {
             // Arrange
             LocksController controller = new LocksController();
 
+            var term = "Head";
             // Act
-            controller.Post("value");
+            var result = controller.Search(term);
 
             // Assert
-        }
-
-        [TestMethod]
-        public void Put()
-        {
-            // Arrange
-            LocksController controller = new LocksController();
-
-            // Act
-            controller.Put(5, "value");
-
-            // Assert
-        }
-
-        [TestMethod]
-        public void Delete()
-        {
-            // Arrange
-            LocksController controller = new LocksController();
-
-            // Act
-            controller.Delete(5);
-
-            // Assert
+            Assert.IsNotNull(result);
         }
     }
 }
