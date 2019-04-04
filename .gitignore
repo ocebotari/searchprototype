@@ -5,3 +5,5 @@ src/SimonsVossSearchPrototype.DAL/obj/
 src/SimonsVossSearchPrototype/obj/
 src/packages/
 src/SimonsVossSearchPrototype.Tests/obj/
+src/SimonsVossSearchPrototype.Tests/bin/
+src/SimonsVossSearchPrototype.DAL/bin/
