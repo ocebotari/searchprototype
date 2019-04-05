@@ -1,0 +1,63 @@
+﻿@model SimonsVossSearchPrototype.Models.SearchModule
+
+@{
+    ViewBag.Title = "Search";
+}
+
+<h2>Search</h2>
+
+<div class="form-horizontal">
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="form-group">
+        @Html.LabelFor(model => model.Term, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Term, new { htmlAttributes = new { id = "terms", @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Term, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Results, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.TextAreaFor(model => model.Results, new { @class = "form-control full-width", style = "height: 300px" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <button id="btnSearch" class="btn btn-default">Search</button>
+        </div>
+    </div>
+</div>
+
+<p>
+
+</p>
+
+
+@section scripts{
+<script type="text/javascript">
+    $(function () {
+        $("#btnSearch").click(function () {
+            $("#Results").val("");
+            var url = "../api/locks/search/";
+            $.getJSON(url, { term: $("#terms").val() })
+                .done(function (json) {
+                    console.log("JSON Data: ");
+                    console.log(json);
+                    var val = "Count: " + json.count + "\n";
+                    var matched = JSON.stringify(json.locks, undefined, 2);
+                    val += matched;
+                    $("#Results").val(val);
+                })
+                .fail(function (jqxhr, textStatus, error) {
+                    var err = textStatus + ", " + error;
+                    console.log("Request Failed: " + err);
+                    $("#Results").val("Request Failed: " + err);
+                });
+        });
+    });
+</script>
+
+}
