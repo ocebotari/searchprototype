@@ -29,31 +29,53 @@ namespace SimonsVossSearchPrototype.Controllers
         [HttpGet]
         public async Task<IHttpActionResult> Get()
         {
-            var collection = await Task.Run(() => dbStorage.GetCollection<Lock>());
+            var collection = await Task.Run(() => dbStorage.GetCollection<Lock>("locks"));
 
-            return Ok(collection);
+            var locks = collection.AsQueryable();
+            foreach (var item in locks)
+            {
+                var buildingCollection = dbStorage.GetCollection<Building>("buildings");
+                if(buildingCollection != null)
+                {
+                    item.Building = buildingCollection.AsQueryable().FirstOrDefault(b => b.Id.Equals(item.BuildingId));
+                }
+            }
+
+            var count = collection.Count;
+
+            return Ok(new { count, locks });
         }
 
         // GET api/locks/0a1e6f38-6076-4da8-8d6c-87356f975baf
+        [Route("{id:guid}")]
         public async Task<IHttpActionResult> Get(Guid id)
         {
-            var collection = await Task.Run(() => dbStorage.GetCollection<Lock>());
+            var collection = await Task.Run(() => dbStorage.GetCollection<Lock>("locks"));
 
-            var lockItem = dbStorage.GetItem<Lock>(id.ToString());
-            var lockItem1 = collection.AsQueryable().FirstOrDefault(l => l.Id.Equals(id));
+            var lockItem = collection.AsQueryable().FirstOrDefault(l => l.Id.Equals(id));
 
-            return Ok(new { lockItem, lockItem1});
+            return Ok(new { lockItem });
         }
 
         // GET api/locks/search/term
-        [Route("search/{term}")]
-        public async Task<IHttpActionResult> Search(string term)
+        [HttpGet]
+        [Route("search")]
+        public async Task<IHttpActionResult> Search([FromUri]string term)
         {
-            var collection = await Task.Run(() => dbStorage.GetCollection<Lock>());
-            var matched = collection.Find(term, true);
+            var collection = await Task.Run(() => dbStorage.GetCollection<Lock>("locks"));
+            var locks = collection.Find(term, true);
+
+            foreach (var item in locks)
+            {
+                var buildingCollection = dbStorage.GetCollection<Building>("buildings");
+                if (buildingCollection != null)
+                {
+                    item.Building = buildingCollection.AsQueryable().FirstOrDefault(b => b.Id.Equals(item.BuildingId));
+                }
+            }
 
             //await Task.Delay(100);
-            return Ok(matched);
+            return Ok(new { count = locks.Count(), locks });
         }
 
     }
