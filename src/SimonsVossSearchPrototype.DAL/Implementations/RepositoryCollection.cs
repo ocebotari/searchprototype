@@ -31,6 +31,9 @@ namespace SimonsVossSearchPrototype.DAL.Implementations
 
         public IEnumerable<T> Find(string text, bool caseSensitive = false)
         {
+            if (string.IsNullOrWhiteSpace(text))
+                return _data.Value;
+
             return _data.Value.Where(t => Extensions.FullTextSearch(t, text, caseSensitive));
         }
     }
