@@ -67,8 +67,6 @@ namespace SimonsVossSearchPrototype.DAL.Implementations
         {
             // NOTE 27.6.2017: Should this be new Func<JToken, T>(e => e.ToObject<T>())?
             var readConvert = new Func<JToken, T>(e => JsonConvert.DeserializeObject<T>(e.ToString()));
-            var insertConvert = new Func<T, T>(e => e);
-            var createNewInstance = new Func<T>(() => Activator.CreateInstance<T>());
 
             return GetCollection(name ?? _convertPathToCorrectCamelCase(typeof(T).Name), readConvert);
         }
