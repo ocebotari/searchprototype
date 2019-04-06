@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace SimonsVossSearchPrototype.DAL.Models
 {
-    public abstract class Entity<TKey>
+    public class WeightValue
     {
-        [JsonProperty(Order = 0)]
-        public TKey Id { get; set; }        
+        public string Name { get; set; }
+        public int W { get; set; }
+        public int WT { get; set; }
     }
 }

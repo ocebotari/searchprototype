@@ -22,6 +22,9 @@ namespace SimonsVossSearchPrototype
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));
+
+            bundles.Add(new ScriptBundle("~/bundles/jsontotable").Include(
+                        "~/Scripts/JSON-to-Table-{version}.js"));
         }
     }
 }

@@ -54,6 +54,7 @@
     <Compile Include="Models\Group.cs" />
     <Compile Include="Models\Lock.cs" />
     <Compile Include="Models\Media.cs" />
+    <Compile Include="Models\WeightValue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,7 @@
 ﻿using SimonsVossSearchPrototype.DAL.Implementations;
 using SimonsVossSearchPrototype.DAL.Interfaces;
 using SimonsVossSearchPrototype.DAL.Models;
+using SimonsVossSearchPrototype.Services;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -18,11 +19,13 @@ namespace SimonsVossSearchPrototype.Controllers
     public class LocksController : ApiController
     {
         IDataStorage dbStorage;
+        ISearchService service;
         
         public LocksController()
         {
             var path = HttpContext.Current.Server.MapPath(ConfigurationManager.AppSettings["json-data-file"]);
             dbStorage = new JsonDataStorage(path);
+            service = new SearchService(dbStorage);
         }
 
         // GET api/locks
@@ -62,21 +65,50 @@ namespace SimonsVossSearchPrototype.Controllers
         [Route("search")]
         public async Task<IHttpActionResult> Search([FromUri]string term)
         {
-            var collection = await Task.Run(() => dbStorage.GetCollection<Lock>("locks"));
-            var locks = collection.Find(term, true);
+            //var buildingCollection = await Task.Run(() => dbStorage.GetCollection<Building>("buildings"));            
+            //var lockCollection = await Task.Run(() => dbStorage.GetCollection<Lock>("locks"));
+            //var groupCollection = await Task.Run(() => dbStorage.GetCollection<Group>("groups"));
+            //var mediaCollection = await Task.Run(() => dbStorage.GetCollection<Media>("medias"));
 
-            foreach (var item in locks)
-            {
-                var buildingCollection = dbStorage.GetCollection<Building>("buildings");
-                if (buildingCollection != null)
-                {
-                    item.Building = buildingCollection.AsQueryable().FirstOrDefault(b => b.Id.Equals(item.BuildingId));
-                }
-            }
+            ////building
+            //var list = buildingCollection.AsQueryable().ToList();
+            //list.ForEach(b => b.CalculateWeight(term, lockCollection.AsQueryable()));
 
-            //await Task.Delay(100);
-            return Ok(new { count = locks.Count(), locks });
+            //var bsearch = list.Where(b => b.SumWeight > 0).OrderByDescending(b => b.SumWeight);
+
+            ////locks
+            //var locksQuery = lockCollection.AsQueryable();
+            //locksQuery.ToList().ForEach(l => l.CalculateWeight(term));
+            //var lsearch = locksQuery.Where(l => l.SumWeight > 0).OrderByDescending(l => l.SumWeight);
+
+            ////groups
+            //var groupsQuery = groupCollection.AsQueryable();
+            //groupsQuery.ToList().ForEach(g => g.CalculateWeight(term, mediaCollection.AsQueryable()));
+            //var gsearch = groupsQuery.Where(g => g.SumWeight > 0).OrderByDescending(g => g.SumWeight);
+
+
+            ////medias
+            //var mediasQuery = mediaCollection.AsQueryable();
+            //mediasQuery.ToList().ForEach(m => m.CalculateWeight(term));
+            //var msearch = mediasQuery.Where(m => m.SumWeight > 0).OrderByDescending(m => m.SumWeight);
+
+            //foreach (var item in locks)
+            //{
+            //    var buildingCollection = dbStorage.GetCollection<Building>("buildings");
+            //    if (buildingCollection != null)
+            //    {
+            //        item.Building = buildingCollection.AsQueryable().FirstOrDefault(b => b.Id.Equals(item.BuildingId));
+            //    }
+            //}
+
+            var result = await service.Search(term);
+
+            var bResult = new { count = result.Buildings.Count(), list = result.Buildings };
+            var lResult = new { count = result.Locks.Count(), list = result.Locks };
+            var gResult = new { count = result.Groups.Count(), list = result.Groups };
+            var mResult = new { count = result.Medias.Count(), list = result.Medias };
+            
+            return Ok(new { buildings = bResult, locks = lResult, groups = gResult, medias = mResult });
         }
-
     }
 }
