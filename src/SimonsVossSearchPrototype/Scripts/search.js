@@ -13,18 +13,6 @@
                 console.log(json);
                 var val = '';
 
-                //val = setResult("Buildings", json.buildings.count, json.buildings.list);
-                //val += setResult("Locks", json.locks.count, json.locks.list);
-                //val += setResult("Groups", json.groups.count, json.groups.list);
-                //val += setResult("Medias", json.medias.count, json.medias.list);
-
-                //$("#Results").val(val);
-
-                //createTableFromJson('.table1', json.buildings.list);
-                //createTableFromJson('.table2', json.locks.list);
-                //createTableFromJson('.table3', json.groups.list);
-                //createTableFromJson('.table4', json.medias.list);
-
                 val = setResult("", json.count, json.list);
                 $("#Results").val(val);
 
@@ -44,7 +32,6 @@
 
         if (count == 0) return "";
 
-        //var val = "------" + title + "--------\n";
         var val = "Count: " + count + "\n";
         var matched = JSON.stringify(list, undefined, 2);
         val += matched;
