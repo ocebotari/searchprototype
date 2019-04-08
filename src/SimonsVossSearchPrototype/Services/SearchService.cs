@@ -1,10 +1,7 @@
 ﻿using SimonsVossSearchPrototype.DAL.Interfaces;
 using SimonsVossSearchPrototype.DAL.Models;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace SimonsVossSearchPrototype.Services
 {

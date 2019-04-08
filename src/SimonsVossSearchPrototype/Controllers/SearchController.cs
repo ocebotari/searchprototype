@@ -19,21 +19,20 @@ namespace SimonsVossSearchPrototype.Controllers
     [RoutePrefix("api/search")]
     public class SearchController : ApiController
     {
-        IDataStorage dbStorage;
-        ISearchService service;
+        private readonly IDataStorage _dbStorage;
+        private readonly ISearchService _service;
         
-        public SearchController()
+        public SearchController(ISearchService service, IDataStorage dbStorage)
         {
-            var path = HttpContext.Current.Server.MapPath(ConfigurationManager.AppSettings["json-data-file"]);
-            dbStorage = new JsonDataStorage(path);
-            service = new SearchService(dbStorage);
+            _dbStorage = dbStorage;
+            _service = service;
         }
 
         // GET api/search/locks/0a1e6f38-6076-4da8-8d6c-87356f975baf
         [Route("locks/{id:guid}")]
         public async Task<IHttpActionResult> Get(Guid id)
         {
-            var collection = await Task.Run(() => dbStorage.GetCollection<Lock>("locks"));
+            var collection = await Task.Run(() => _dbStorage.GetCollection<Lock>("locks"));
 
             var lockItem = collection.AsQueryable().FirstOrDefault(l => l.Id.Equals(id));
 
@@ -44,7 +43,7 @@ namespace SimonsVossSearchPrototype.Controllers
         [Route("buildings/{id:guid}")]
         public async Task<IHttpActionResult> GetBuilings(Guid id)
         {
-            var collection = await Task.Run(() => dbStorage.GetCollection<Building>("buildings"));
+            var collection = await Task.Run(() => _dbStorage.GetCollection<Building>("buildings"));
 
             var building = collection.AsQueryable().FirstOrDefault(b => b.Id.Equals(id));
 
@@ -107,7 +106,7 @@ namespace SimonsVossSearchPrototype.Controllers
         [Route("buildings", Name ="BuildingsSearchApi")]
         public async Task<IHttpActionResult> SearchBuildings([FromUri]string term)
         {
-            var result = await service.Search(term);
+            var result = await _service.Search(term);
 
             var buildings = new { count = result.Buildings.Count(), list = result.Buildings };
 
@@ -119,7 +118,7 @@ namespace SimonsVossSearchPrototype.Controllers
         [Route("locks", Name = "LocksSearchApi")]
         public async Task<IHttpActionResult> SearchLocks([FromUri]string term)
         {
-            var result = await service.Search(term);
+            var result = await _service.Search(term);
 
             var locks = new { count = result.Locks.Count(), list = result.Locks };
 
@@ -131,7 +130,7 @@ namespace SimonsVossSearchPrototype.Controllers
         [Route("groups", Name = "GroupsSearchApi")]
         public async Task<IHttpActionResult> SearchGroups([FromUri]string term)
         {
-            var result = await service.Search(term);
+            var result = await _service.Search(term);
 
             var groups = new { count = result.Groups.Count(), list = result.Groups };
 
@@ -143,7 +142,7 @@ namespace SimonsVossSearchPrototype.Controllers
         [Route("medias", Name = "MediasSearchApi")]
         public async Task<IHttpActionResult> SearchMedias([FromUri]string term)
         {
-            var result = await service.Search(term);
+            var result = await _service.Search(term);
 
             var medias = new { count = result.Medias.Count(), list = result.Medias };
 
