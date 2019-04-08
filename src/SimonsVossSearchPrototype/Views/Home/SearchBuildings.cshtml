@@ -1,0 +1,19 @@
+﻿@model SimonsVossSearchPrototype.Models.SearchModule
+@{
+    ViewBag.Title = "Buildings";
+}
+
+<h2>Search Buildings</h2>
+
+@Html.Partial("SearchFormPartial", Model)
+
+@Html.Partial("SearchResultsPartial")
+
+@Html.Hidden("SearchApiUrl", Url.HttpRouteUrl("BuildingsSearchApi", new { }))
+
+@section scripts{
+
+    @Scripts.Render("~/bundles/jsontotable")
+    @Scripts.Render("~/Scripts/search.js")
+
+}

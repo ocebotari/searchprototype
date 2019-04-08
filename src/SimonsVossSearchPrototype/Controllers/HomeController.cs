@@ -18,11 +18,49 @@ namespace SimonsVossSearchPrototype.Controllers
 
         public ActionResult Search()
         {
-            ViewBag.Title = "Search Prototype";
+            ViewBag.Title = "Search";
+
+            return View();
+        }
+
+        [Route("buildings")]
+        public ActionResult SearchBuildings()
+        {
+            ViewBag.Title = "Search Buildings";
+
+            var model = new SearchModule();
+
+            return View("SearchBuildings", model);
+        }
+
+        [Route("locks")]
+        public ActionResult SearchLocks()
+        {
+            ViewBag.Title = "Search Locks";
 
             var model = new SearchModule();
 
             return View(model);
         }
+
+        [Route("groups")]
+        public ActionResult SearchGroups()
+        {
+            ViewBag.Title = "Search Groups";
+
+            var model = new SearchModule();
+
+            return View(model);
+        }
+        [Route("medias")]
+        public ActionResult SearchMedias()
+        {
+            ViewBag.Title = "Search Medias";
+
+            var model = new SearchModule();
+
+            return View(model);
+        }
+
     }
 }

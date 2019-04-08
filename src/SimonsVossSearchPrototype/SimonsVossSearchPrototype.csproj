@@ -164,7 +164,7 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\LocksController.cs" />
+    <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -235,6 +235,7 @@
     <Content Include="Scripts\popper-utils.min.js" />
     <Content Include="Scripts\popper.js" />
     <Content Include="Scripts\popper.min.js" />
+    <Content Include="Scripts\search.js" />
     <Content Include="Scripts\umd\popper-utils.js" />
     <Content Include="Scripts\umd\popper-utils.min.js" />
     <Content Include="Scripts\umd\popper.js" />
@@ -263,6 +264,12 @@
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
     <Content Include="Views\Home\Search.cshtml" />
+    <Content Include="Views\Home\SearchBuildings.cshtml" />
+    <Content Include="Views\Home\SearchResultsPartial.cshtml" />
+    <Content Include="Views\Home\SearchFormPartial.cshtml" />
+    <Content Include="Views\Home\SearchLocks.cshtml" />
+    <Content Include="Views\Home\SearchGroups.cshtml" />
+    <Content Include="Views\Home\SearchMedias.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

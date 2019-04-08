@@ -1,4 +1,4 @@
-﻿@model SimonsVossSearchPrototype.Models.SearchModule
+﻿@*@model SimonsVossSearchPrototype.Models.SearchModule*@
 
 @{
     ViewBag.Title = "Search";
@@ -6,7 +6,16 @@
 
 <h2>Search</h2>
 
-<div class="form-horizontal">
+<div>
+    <ul class="nav nav-pills nav-stacked">
+        <li role="presentation">@Html.RouteLink("Buildings", "SearchBuildings")</li>
+        <li role="presentation">@Html.RouteLink("Locks", "SearchLocks")</li>
+        <li role="presentation">@Html.RouteLink("Groups", "SearchGroups")</li>
+        <li role="presentation">@Html.RouteLink("Medias", "SearchMedias")</li>
+    </ul>
+</div>
+
+@*<div class="form-horizontal">
     <hr />
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     <div class="form-group">
@@ -48,13 +57,13 @@
         Medias
         <div class="table4 margin-bottom"></div>
     </div>
-</div>
+</div>*@
 
     @section scripts{
 
         @Scripts.Render("~/bundles/jsontotable")
 
-        <script type="text/javascript">
+        @*<script type="text/javascript">
             $(function () {
                 $("#btnSearch").click(function () {
                     var self = this;
@@ -142,6 +151,6 @@
                     });
                 }
             });
-        </script>
+        </script>*@
 
     }
