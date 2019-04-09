@@ -1,5 +1,6 @@
 using SimonsVossSearchPrototype.DAL.Implementations;
 using SimonsVossSearchPrototype.DAL.Interfaces;
+using SimonsVossSearchPrototype.DAL.Models;
 using SimonsVossSearchPrototype.Services;
 using System;
 using System.Configuration;
@@ -53,8 +54,10 @@ namespace SimonsVossSearchPrototype
 
             container.RegisterFactory<IDataStorage>((c) => new JsonDataStorage(path));
 
-            //container.RegisterType<IDataStorage, JsonDataStorage>();
-            container.RegisterType<ISearchService, SearchService>();
+            container.RegisterType<ISearchService<Building>, BuildingSearchService>();
+            container.RegisterType<ISearchService<Lock>, LockSearchService>();
+            container.RegisterType<ISearchService<Group>, GroupSearchService>();
+            container.RegisterType<ISearchService<Media>, MediaSearchService>();
         }
     }
 }

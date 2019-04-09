@@ -187,9 +187,13 @@
     </Compile>
     <Compile Include="Models\SearchModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\BaseSearchService.cs" />
+    <Compile Include="Services\BuildingSearchService.cs" />
+    <Compile Include="Services\GroupSearchService.cs" />
     <Compile Include="Services\ISearchService.cs" />
-    <Compile Include="Services\SearchResponse.cs" />
-    <Compile Include="Services\SearchService.cs" />
+    <Compile Include="Services\LockSearchService.cs" />
+    <Compile Include="Services\MediaSearchService.cs" />
+    <Compile Include="Services\SearchResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />
