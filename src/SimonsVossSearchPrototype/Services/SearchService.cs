@@ -44,12 +44,12 @@ namespace SimonsVossSearchPrototype.Services
 
                 var lockCollection = _dbStorage.GetCollection<Lock>("locks");
 
+                buildings.ToList().ForEach(b => b.CalculateWeight(term, lockCollection.AsQueryable()));
+
+                var buildingsResult = buildings.Where(b => b.SumWeight > 0).OrderByDescending(b => b.SumWeight);
+
                 if (!string.IsNullOrWhiteSpace(term))
                 {
-                    buildings.ToList().ForEach(b => b.CalculateWeight(term, lockCollection.AsQueryable()));
-
-                    var buildingsResult = buildings.Where(b => b.SumWeight > 0).OrderByDescending(b => b.SumWeight);
-
                     response = buildingsResult;
                 }
                 else
@@ -82,12 +82,14 @@ namespace SimonsVossSearchPrototype.Services
                     item.Building = buildings.FirstOrDefault(b => b.Id.Equals(item.BuildingId));
                 }
 
+                locks.ToList().ForEach(l => l.CalculateWeight(term));
+
+                var locksResult = locks.Where(l => l.SumWeight > 0).OrderByDescending(l => l.SumWeight);
+
+                response = locksResult;
+
                 if (!string.IsNullOrWhiteSpace(term))
                 {
-                    locks.ToList().ForEach(l => l.CalculateWeight(term));
-
-                    var locksResult = locks.Where(l => l.SumWeight > 0).OrderByDescending(l => l.SumWeight);
-
                     response = locksResult;
                 }
                 else
@@ -116,18 +118,14 @@ namespace SimonsVossSearchPrototype.Services
                 var groups = collection.AsQueryable();
                 var medias = mediaCollection.AsQueryable();
 
-                if (!string.IsNullOrWhiteSpace(term))
-                {
-                    groups.ToList().ForEach(g => g.CalculateWeight(term, medias));
+                groups.ToList().ForEach(g => g.CalculateWeight(term, medias));
 
-                    var groupsResult = groups.Where(g => g.SumWeight > 0).OrderByDescending(g => g.SumWeight);
+                var groupsResult = groups.Where(g => g.SumWeight > 0).OrderByDescending(g => g.SumWeight);
 
-                    response = groupsResult;
-                }
-                else
-                {
+                if (string.IsNullOrWhiteSpace(term))
                     response = groups;
-                }
+                else
+                    response = groupsResult;
             });
 
             return response;
@@ -155,12 +153,11 @@ namespace SimonsVossSearchPrototype.Services
                     item.Group = groups.FirstOrDefault(g => g.Id.Equals(item.GroupId));
                 }
 
+                medias.ToList().ForEach(m => m.CalculateWeight(term));
+                var mediasResult = medias.Where(m => m.SumWeight > 0).OrderByDescending(m => m.SumWeight);
+
                 if (!string.IsNullOrWhiteSpace(term))
                 {
-                    medias.ToList().ForEach(m => m.CalculateWeight(term));
-
-                    var mediasResult = medias.Where(m => m.SumWeight > 0).OrderByDescending(m => m.SumWeight);
-
                     response = mediasResult;
                 }
                 else

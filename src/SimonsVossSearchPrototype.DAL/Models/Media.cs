@@ -37,23 +37,30 @@ namespace SimonsVossSearchPrototype.DAL.Models
         public string SerialNumber { get; set; }
         [JsonProperty(Order = 6)]
         public int SumWeight { get; set; }
-        [JsonProperty(Order = 7)]
+        [JsonIgnore]
         public Group Group { get; set; }
 
         public void CalculateWeight(string term)
         {
-            var regex = new Regex(term, RegexOptions.IgnoreCase);
-            if (!string.IsNullOrWhiteSpace(Owner) && regex.IsMatch(Owner))
-                SumWeight += WeightList.Where(w => w.Name == "owner").Select(w => w.W).FirstOrDefault();
+            if (string.IsNullOrWhiteSpace(term)) return;
 
-            if (!string.IsNullOrWhiteSpace(Type) && regex.IsMatch(Type))
-                SumWeight += WeightList.Where(w => w.Name == "type").Select(w => w.W).FirstOrDefault();
+            var sourceArray = term.Split(new char[] { ' ' });
+            foreach (var text in sourceArray)
+            {
+                if (string.IsNullOrWhiteSpace(text)) continue;
 
-            if (!string.IsNullOrWhiteSpace(SerialNumber) && regex.IsMatch(SerialNumber))
-                SumWeight += WeightList.Where(w => w.Name == "serialNumber").Select(w => w.W).FirstOrDefault();
+                if (Owner.IsMatch(text))
+                    SumWeight += WeightList.Where(w => w.Name == "owner").Select(w => w.W).FirstOrDefault();
 
-            if (!string.IsNullOrWhiteSpace(Description) && regex.IsMatch(Description))
-                SumWeight += WeightList.Where(w => w.Name == "description").Select(w => w.W).FirstOrDefault();
+                if (Type.IsMatch(text))
+                    SumWeight += WeightList.Where(w => w.Name == "type").Select(w => w.W).FirstOrDefault();
+
+                if (SerialNumber.IsMatch(text))
+                    SumWeight += WeightList.Where(w => w.Name == "serialNumber").Select(w => w.W).FirstOrDefault();
+
+                if (Description.IsMatch(text))
+                    SumWeight += WeightList.Where(w => w.Name == "description").Select(w => w.W).FirstOrDefault();
+            }
         }
     }
 }

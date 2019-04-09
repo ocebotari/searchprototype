@@ -43,30 +43,36 @@ namespace SimonsVossSearchPrototype.DAL.Models
         public string RoomNumber { get; set; }
         [JsonProperty(Order = 8)]
         public int SumWeight { get; set; }
-        [JsonProperty(Order = 9)]
-        public Building Building { get; set; }        
+        [JsonIgnore]
+        public Building Building { get; set; }
 
         public void CalculateWeight(string term)
         {
-            var regex = new Regex(term, RegexOptions.IgnoreCase);
+            if (string.IsNullOrWhiteSpace(term)) return;
 
-            if (!string.IsNullOrWhiteSpace(Name) && regex.IsMatch(Name))
-                SumWeight += WeightList.Where(w => w.Name == "name").Select(w => w.W).FirstOrDefault();
+            var sourceArray = term.Split(new char[] { ' ' });
+            foreach (var text in sourceArray)
+            {
+                if (string.IsNullOrWhiteSpace(text)) continue;
 
-            if (!string.IsNullOrWhiteSpace(Type) && regex.IsMatch(Type))
-                SumWeight += WeightList.Where(w => w.Name == "type").Select(w => w.W).FirstOrDefault();
+                if (Name.IsMatch(text))
+                    SumWeight += WeightList.Where(w => w.Name == "name").Select(w => w.W).FirstOrDefault();
 
-            if (!string.IsNullOrWhiteSpace(SerialNumber) && regex.IsMatch(SerialNumber))
-                SumWeight += WeightList.Where(w => w.Name == "serialNumber").Select(w => w.W).FirstOrDefault();
+                if (Type.IsMatch(text))
+                    SumWeight += WeightList.Where(w => w.Name == "type").Select(w => w.W).FirstOrDefault();
 
-            if (!string.IsNullOrWhiteSpace(Floor) && regex.IsMatch(Floor))
-                SumWeight += WeightList.Where(w => w.Name == "floor").Select(w => w.W).FirstOrDefault();
+                if (SerialNumber.IsMatch(text))
+                    SumWeight += WeightList.Where(w => w.Name == "serialNumber").Select(w => w.W).FirstOrDefault();
 
-            if (!string.IsNullOrWhiteSpace(RoomNumber) && regex.IsMatch(RoomNumber))
-                SumWeight += WeightList.Where(w => w.Name == "roomNumber").Select(w => w.W).FirstOrDefault();
+                if (Floor.IsMatch(text))
+                    SumWeight += WeightList.Where(w => w.Name == "floor").Select(w => w.W).FirstOrDefault();
 
-            if (!string.IsNullOrWhiteSpace(Description) && regex.IsMatch(Description))
-                SumWeight += WeightList.Where(w => w.Name == "description").Select(w => w.W).FirstOrDefault();
+                if (RoomNumber.IsMatch(text))
+                    SumWeight += WeightList.Where(w => w.Name == "roomNumber").Select(w => w.W).FirstOrDefault();
+
+                if (Description.IsMatch(text))
+                    SumWeight += WeightList.Where(w => w.Name == "description").Select(w => w.W).FirstOrDefault();
+            }
         }
     }
 }

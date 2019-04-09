@@ -23,42 +23,58 @@ namespace SimonsVossSearchPrototype.DAL.Models
 
         [JsonIgnore]
         public List<WeightValue> WeightList { get; set; }
-        [JsonProperty(Order = 4)]
-        public int SumWeight { get; set; }
+        
         [JsonProperty(Order = 1)]
         public string ShortCut { get; set; }
+
         [JsonProperty(Order = 2)]
         public string Name { get; set; }
+
         [JsonProperty(Order = 3)]
         public string Description { get; set; }
 
+        [JsonProperty(Order = 4)]
+        public int LockCount { get; set; }
+
+        [JsonProperty(Order = 5)]
+        public int SumWeight { get; set; }
+
         public void CalculateWeight(string term, IEnumerable<Lock> locks)
         {
-            var regex = new Regex(term, RegexOptions.IgnoreCase);
-            if (!string.IsNullOrWhiteSpace(Name) && regex.IsMatch(Name))
-            {
-                SumWeight += WeightList.Where(w => w.Name == "name").Select(w => w.W).FirstOrDefault();
-                if(locks.Count(l => l.BuildingId.Equals(Id)) > 0)
-                {
-                    SumWeight += WeightList.Where(w => w.Name == "name").Select(w => w.WT).FirstOrDefault();
-                }
-            }
+            LockCount = locks.Count(l => l.BuildingId.Equals(Id));
 
-            if (!string.IsNullOrWhiteSpace(ShortCut) && regex.IsMatch(ShortCut))
-            {
-                SumWeight += WeightList.Where(w => w.Name == "shortCut").Select(w => w.W).FirstOrDefault();
-                if (locks.Count(l => l.BuildingId.Equals(Id)) > 0)
-                {
-                    SumWeight += WeightList.Where(w => w.Name == "shortCut").Select(w => w.WT).FirstOrDefault();
-                }
-            }
+            if (string.IsNullOrWhiteSpace(term)) return;
 
-            if (!string.IsNullOrWhiteSpace(Description) && regex.IsMatch(Description))
+            var sourceArray = term.Split(new char[] { ' ' });
+            foreach (var text in sourceArray)
             {
-                SumWeight += WeightList.Where(w => w.Name == "description").Select(w => w.W).FirstOrDefault();
-                if (locks.Count(l => l.BuildingId.Equals(Id)) > 0)
+                if (string.IsNullOrWhiteSpace(text)) continue;
+
+                if (Name.IsMatch(text))
                 {
-                    SumWeight += WeightList.Where(w => w.Name == "description").Select(w => w.WT).FirstOrDefault();
+                    SumWeight += WeightList.Where(w => w.Name == "name").Select(w => w.W).FirstOrDefault();
+                    if (LockCount > 0)
+                    {
+                        SumWeight += WeightList.Where(w => w.Name == "name").Select(w => w.WT).FirstOrDefault();
+                    }
+                }
+
+                if (ShortCut.IsMatch(text))
+                {
+                    SumWeight += WeightList.Where(w => w.Name == "shortCut").Select(w => w.W).FirstOrDefault();
+                    if (LockCount > 0)
+                    {
+                        SumWeight += WeightList.Where(w => w.Name == "shortCut").Select(w => w.WT).FirstOrDefault();
+                    }
+                }
+
+                if (Description.IsMatch(text))
+                {
+                    SumWeight += WeightList.Where(w => w.Name == "description").Select(w => w.W).FirstOrDefault();
+                    if (LockCount > 0)
+                    {
+                        SumWeight += WeightList.Where(w => w.Name == "description").Select(w => w.WT).FirstOrDefault();
+                    }
                 }
             }
         }

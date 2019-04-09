@@ -22,31 +22,42 @@ namespace SimonsVossSearchPrototype.DAL.Models
 
         [JsonIgnore]
         public List<WeightValue> WeightList { get; set; }
-        [JsonProperty(Order = 3)]
-        public int SumWeight { get; set; }
         [JsonProperty(Order = 1)]
         public string Name { get; set; }
         [JsonProperty(Order = 2)]
         public string Description { get; set; }
+        [JsonProperty(Order = 3)]
+        public int MediaCount { get; set; }
+        [JsonProperty(Order = 4)]
+        public int SumWeight { get; set; }
 
         public void CalculateWeight(string term, IEnumerable<Media> medias)
         {
-            var regex = new Regex(term, RegexOptions.IgnoreCase);
-            if (!string.IsNullOrWhiteSpace(Name) && regex.IsMatch(Name))
-            {
-                SumWeight += WeightList.Where(w => w.Name == "name").Select(w => w.W).FirstOrDefault();
-                if (medias.Count(l => l.GroupId.Equals(Id)) > 0)
-                {
-                    SumWeight += WeightList.Where(w => w.Name == "name").Select(w => w.WT).FirstOrDefault();
-                }
-            }
+            MediaCount = medias.Count(l => l.GroupId.Equals(Id));
 
-            if (!string.IsNullOrWhiteSpace(Description) && regex.IsMatch(Description))
+            if (string.IsNullOrWhiteSpace(term)) return;
+
+            var sourceArray = term.Split(new char[] { ' ' });
+            foreach (var text in sourceArray)
             {
-                SumWeight += WeightList.Where(w => w.Name == "description").Select(w => w.W).FirstOrDefault();
-                if (medias.Count(l => l.GroupId.Equals(Id)) > 0)
+                if (string.IsNullOrWhiteSpace(text)) continue;
+
+                if (Name.IsMatch(text))
                 {
-                    SumWeight += WeightList.Where(w => w.Name == "description").Select(w => w.WT).FirstOrDefault();
+                    SumWeight += WeightList.Where(w => w.Name == "name").Select(w => w.W).FirstOrDefault();
+                    if (MediaCount > 0)
+                    {
+                        SumWeight += WeightList.Where(w => w.Name == "name").Select(w => w.WT).FirstOrDefault();
+                    }
+                }
+
+                if (Description.IsMatch(text))
+                {
+                    SumWeight += WeightList.Where(w => w.Name == "description").Select(w => w.W).FirstOrDefault();
+                    if (MediaCount > 0)
+                    {
+                        SumWeight += WeightList.Where(w => w.Name == "description").Select(w => w.WT).FirstOrDefault();
+                    }
                 }
             }
         }

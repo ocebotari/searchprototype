@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace SimonsVossSearchPrototype.DAL
@@ -79,6 +80,15 @@ namespace SimonsVossSearchPrototype.DAL
         private static bool IsEnumerable(Type toTest)
         {
             return typeof(IEnumerable).IsAssignableFrom(toTest) && toTest != typeof(string);
+        }
+
+        public static bool IsMatch(this string input, string textToMatch)
+        {
+            if (string.IsNullOrWhiteSpace(input)) return false;
+
+            var regex = new Regex(textToMatch, RegexOptions.IgnoreCase);
+
+            return regex.IsMatch(input);
         }
     }
 }
