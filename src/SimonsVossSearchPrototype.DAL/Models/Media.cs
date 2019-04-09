@@ -24,8 +24,7 @@ namespace SimonsVossSearchPrototype.DAL.Models
 
         [JsonIgnore]
         public List<WeightValue> WeightList { get; set; }
-        [JsonProperty(Order = 6)]
-        public int SumWeight { get; set; }
+        
         [JsonProperty(Order = 1)]
         public Guid? GroupId { get; set; }
         [JsonProperty(Order = 2)]
@@ -37,6 +36,8 @@ namespace SimonsVossSearchPrototype.DAL.Models
         [JsonProperty(Order = 5)]
         public string SerialNumber { get; set; }
         [JsonProperty(Order = 6)]
+        public int SumWeight { get; set; }
+        [JsonProperty(Order = 7)]
         public Group Group { get; set; }
 
         public void CalculateWeight(string term)

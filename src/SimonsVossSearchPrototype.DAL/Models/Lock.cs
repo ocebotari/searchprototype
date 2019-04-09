@@ -42,9 +42,9 @@ namespace SimonsVossSearchPrototype.DAL.Models
         [JsonProperty(Order = 7)]
         public string RoomNumber { get; set; }
         [JsonProperty(Order = 8)]
-        public Building Building { get; set; }
-        [JsonProperty(Order = 9)]
         public int SumWeight { get; set; }
+        [JsonProperty(Order = 9)]
+        public Building Building { get; set; }        
 
         public void CalculateWeight(string term)
         {

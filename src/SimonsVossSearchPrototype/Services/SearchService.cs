@@ -1,5 +1,6 @@
 ﻿using SimonsVossSearchPrototype.DAL.Interfaces;
 using SimonsVossSearchPrototype.DAL.Models;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,24 +19,137 @@ namespace SimonsVossSearchPrototype.Services
         {
             var response = new SearchResponse();
 
+            response.Buildings = await SearchBuildings(term);
+            response.Locks = await SearchLocks(term);
+            response.Groups = await SearchGroups(term);
+            response.Medias = await SearchMedias(term);
+
+
+            return response;
+        }
+
+        /// <summary>
+        /// Search Buildings
+        /// </summary>
+        /// <param name="term">Matched text</param>
+        /// <returns>Building Collection</returns>
+        public async Task<IEnumerable<Building>> SearchBuildings(string term)
+        {
+            IEnumerable<Building> response = new List<Building>();
+
             await Task.Run(() =>
             {
-                var buildingCollection = _dbStorage.GetCollection<Building>("buildings");
+                var collection = _dbStorage.GetCollection<Building>("buildings");
+                var buildings = collection.AsQueryable();
+
                 var lockCollection = _dbStorage.GetCollection<Lock>("locks");
-                var groupCollection = _dbStorage.GetCollection<Group>("groups");
-                var mediaCollection = _dbStorage.GetCollection<Media>("media");
 
-                var buildings = buildingCollection.AsQueryable();
+                if (!string.IsNullOrWhiteSpace(term))
+                {
+                    buildings.ToList().ForEach(b => b.CalculateWeight(term, lockCollection.AsQueryable()));
 
+                    var buildingsResult = buildings.Where(b => b.SumWeight > 0).OrderByDescending(b => b.SumWeight);
+
+                    response = buildingsResult;
+                }
+                else
+                {
+                    response = buildings;
+                }
+            });
+
+            return response;
+        }
+
+        /// <summary>
+        /// Search Locks
+        /// </summary>
+        /// <param name="term">Matched text</param>
+        /// <returns>Lock Collection</returns>
+        public async Task<IEnumerable<Lock>> SearchLocks(string term)
+        {
+            IEnumerable<Lock> response = new List<Lock>();
+
+            await Task.Run(() =>
+            {
+                var collection = _dbStorage.GetCollection<Building>("buildings");
+                var lockCollection = _dbStorage.GetCollection<Lock>("locks");
+
+                var buildings = collection.AsQueryable();
                 var locks = lockCollection.AsQueryable();
                 foreach (var item in locks)
                 {
                     item.Building = buildings.FirstOrDefault(b => b.Id.Equals(item.BuildingId));
                 }
 
-                var groups = groupCollection.AsQueryable();
+                if (!string.IsNullOrWhiteSpace(term))
+                {
+                    locks.ToList().ForEach(l => l.CalculateWeight(term));
 
+                    var locksResult = locks.Where(l => l.SumWeight > 0).OrderByDescending(l => l.SumWeight);
+
+                    response = locksResult;
+                }
+                else
+                {
+                    response = locks;
+                }
+            });
+
+            return response;
+        }
+
+        /// <summary>
+        /// Search Groups
+        /// </summary>
+        /// <param name="term">Matched text</param>
+        /// <returns>Group Collection</returns>
+        public async Task<IEnumerable<Group>> SearchGroups(string term)
+        {
+            IEnumerable<Group> response = new List<Group>();
+
+            await Task.Run(() =>
+            {
+                var collection = _dbStorage.GetCollection<Group>("groups");
+                var mediaCollection = _dbStorage.GetCollection<Media>("media");
+
+                var groups = collection.AsQueryable();
                 var medias = mediaCollection.AsQueryable();
+
+                if (!string.IsNullOrWhiteSpace(term))
+                {
+                    groups.ToList().ForEach(g => g.CalculateWeight(term, medias));
+
+                    var groupsResult = groups.Where(g => g.SumWeight > 0).OrderByDescending(g => g.SumWeight);
+
+                    response = groupsResult;
+                }
+                else
+                {
+                    response = groups;
+                }
+            });
+
+            return response;
+        }
+
+        /// <summary>
+        /// Search Medias
+        /// </summary>
+        /// <param name="term">Matched text</param>
+        /// <returns>Media Collection</returns>
+        public async Task<IEnumerable<Media>> SearchMedias(string term)
+        {
+            IEnumerable<Media> response = new List<Media>();
+
+            await Task.Run(() =>
+            {
+                var collection = _dbStorage.GetCollection<Group>("groups");
+                var mediaCollection = _dbStorage.GetCollection<Media>("media");
+
+                var groups = collection.AsQueryable();
+                var medias = mediaCollection.AsQueryable();
+
                 foreach (var item in medias)
                 {
                     item.Group = groups.FirstOrDefault(g => g.Id.Equals(item.GroupId));
@@ -43,28 +157,15 @@ namespace SimonsVossSearchPrototype.Services
 
                 if (!string.IsNullOrWhiteSpace(term))
                 {
-                    buildings.ToList().ForEach(b => b.CalculateWeight(term, lockCollection.AsQueryable()));
-                    locks.ToList().ForEach(l => l.CalculateWeight(term));
-                    groups.ToList().ForEach(g => g.CalculateWeight(term, mediaCollection.AsQueryable()));
                     medias.ToList().ForEach(m => m.CalculateWeight(term));
 
-
-                    var buildingsResult = buildings.Where(b => b.SumWeight > 0).OrderByDescending(b => b.SumWeight);
-                    var locksResult = locks.Where(l => l.SumWeight > 0).OrderByDescending(l => l.SumWeight);
-                    var groupsResult = groups.Where(g => g.SumWeight > 0).OrderByDescending(g => g.SumWeight);
                     var mediasResult = medias.Where(m => m.SumWeight > 0).OrderByDescending(m => m.SumWeight);
 
-                    response.Buildings = buildingsResult;
-                    response.Locks = locksResult;
-                    response.Groups = groupsResult;
-                    response.Medias = mediasResult;
+                    response = mediasResult;
                 }
                 else
                 {
-                    response.Buildings = buildings;
-                    response.Locks = locks;
-                    response.Groups = groups;
-                    response.Medias = medias;
+                    response = medias;
                 }
             });
 

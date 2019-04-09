@@ -106,9 +106,9 @@ namespace SimonsVossSearchPrototype.Controllers
         [Route("buildings", Name ="BuildingsSearchApi")]
         public async Task<IHttpActionResult> SearchBuildings([FromUri]string term)
         {
-            var result = await _service.Search(term);
+            var result = await _service.SearchBuildings(term);
 
-            var buildings = new { count = result.Buildings.Count(), list = result.Buildings };
+            var buildings = new { count = result.Count(), list = result };
 
             return Ok(buildings);
         }
@@ -118,9 +118,9 @@ namespace SimonsVossSearchPrototype.Controllers
         [Route("locks", Name = "LocksSearchApi")]
         public async Task<IHttpActionResult> SearchLocks([FromUri]string term)
         {
-            var result = await _service.Search(term);
+            var result = await _service.SearchLocks(term);
 
-            var locks = new { count = result.Locks.Count(), list = result.Locks };
+            var locks = new { count = result.Count(), list = result };
 
             return Ok(locks);
         }
@@ -130,9 +130,9 @@ namespace SimonsVossSearchPrototype.Controllers
         [Route("groups", Name = "GroupsSearchApi")]
         public async Task<IHttpActionResult> SearchGroups([FromUri]string term)
         {
-            var result = await _service.Search(term);
+            var result = await _service.SearchGroups(term);
 
-            var groups = new { count = result.Groups.Count(), list = result.Groups };
+            var groups = new { count = result.Count(), list = result };
 
             return Ok(groups);
         }
@@ -142,9 +142,9 @@ namespace SimonsVossSearchPrototype.Controllers
         [Route("medias", Name = "MediasSearchApi")]
         public async Task<IHttpActionResult> SearchMedias([FromUri]string term)
         {
-            var result = await _service.Search(term);
+            var result = await _service.SearchMedias(term);
 
-            var medias = new { count = result.Medias.Count(), list = result.Medias };
+            var medias = new { count = result.Count(), list = result };
 
             return Ok(medias);
         }
