@@ -1,36 +1,43 @@
 ﻿$(function () {
     $("#btnSearch").click(function () {
         var self = this;
+        $(self).text("In Progress...");
         $(self).attr("disabled", true);
 
         $("#Results").val("");
         $('.result .row').removeClass('show').addClass('hide');
 
-        var url = $('#SearchApiUrl').val();// "../api/locks/search/";
-        $.getJSON(url, { term: $("#terms").val() })
-            .done(function (json) {
-                console.log("JSON Data: ");
-                console.log(json);
-                var val = '';
+        setTimeout(function () {
 
-                val = setResult("", json.count, json.list);
-                $("#Results").val(val);
+            var url = $('#SearchApiUrl').val();// "../api/locks/search/";
+            $.getJSON(url, { term: $("#terms").val() })
+                .done(function (json) {
+                    console.log("JSON Data: ");
+                    console.log(json);
+                    var val = '';
 
-                createTableFromJson('.table1', json.list);
+                    val = setResult("", json.count, json.list);
+                    $("#Results").val(val);
 
-                $(self).removeAttr("disabled");
-            })
-            .fail(function (jqxhr, textStatus, error) {
-                var err = textStatus + ", " + error;
-                console.log("Request Failed: " + err);
-                $("#Results").val("Request Failed: " + err);
-                $(self).removeAttr("disabled");
-            });
+                    createTableFromJson('.table1', json.list);
+
+                    $(self).text("Search");
+                    $(self).removeAttr("disabled");
+                })
+                .fail(function (jqxhr, textStatus, error) {
+                    var err = textStatus + ", " + error;
+                    console.log("Request Failed: " + err);
+                    $("#Results").val("Request Failed: " + err);
+                    $(self).text("Search");
+                    $(self).removeAttr("disabled");
+                });
+
+        }, 1000);
     });
 
     function setResult(title, count, list) {
 
-        if (count == 0) return "";
+        if (count == 0) return "Not found";
 
         var val = "Count: " + count + "\n";
         var matched = JSON.stringify(list, undefined, 2);
