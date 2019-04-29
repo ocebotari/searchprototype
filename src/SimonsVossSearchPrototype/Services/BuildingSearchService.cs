@@ -21,25 +21,21 @@ namespace SimonsVossSearchPrototype.Services
 
             var lockCollection = _dbStorage.GetCollection<Lock>("locks");
 
-            buildings.ToList().ForEach(b => b.CalculateWeight(query, lockCollection.AsQueryable()));
-
-            var buildingsResult = buildings.Where(b => b.SumWeight > 0).OrderByDescending(b => b.SumWeight);
-
-            IEnumerable<Building> result = new List<Building>();
+            var pageNumber = page > 0 ? page - 1 : page;
+            IEnumerable<Building> result = buildings;
             if (!string.IsNullOrWhiteSpace(query))
             {
-                result = buildingsResult;
-            }
-            else
-            {
-                result = buildings;
+                buildings.ToList().ForEach(b => b.CalculateWeight(query, lockCollection.AsQueryable()));
+
+                result = buildings.Where(b => b.SumWeight > 0).OrderByDescending(b => b.SumWeight);
             }
 
             return new SearchResult<Building>
             {
                 Total = (int)result.Count(),
                 Page = page,
-                Results = result
+                PageSize = pageSize,
+                Results = result.Skip(pageNumber * pageSize).Take(pageSize)
             };
         }
 

@@ -13,7 +13,7 @@ namespace SimonsVossSearchPrototype.Services
         public GroupSearchService(IDataStorage dbStorage) : base(dbStorage)
         { }
 
-        public SearchResult<Group> Search(string query, int page, int pageSize)
+        public SearchResult<Group> Search(string query, int page, int pageSize = 10)
         {
             var collection = _dbStorage.GetCollection<Group>("groups");
             var mediaCollection = _dbStorage.GetCollection<Media>("media");
@@ -21,21 +21,21 @@ namespace SimonsVossSearchPrototype.Services
             var groups = collection.AsQueryable();
             var medias = mediaCollection.AsQueryable();
 
-            groups.ToList().ForEach(g => g.CalculateWeight(query, medias));
+            var pageNumber = page > 0 ? page - 1 : page;
+            IEnumerable<Group> result = groups;
+            if (!string.IsNullOrWhiteSpace(query))
+            {
+                groups.ToList().ForEach(g => g.CalculateWeight(query, medias));
 
-            var groupsResult = groups.Where(g => g.SumWeight > 0).OrderByDescending(g => g.SumWeight);
-
-            IEnumerable<Group> result = new List<Group>();
-            if (string.IsNullOrWhiteSpace(query))
-                result = groups;
-            else
-                result = groupsResult;
+                result = groups.Where(g => g.SumWeight > 0).OrderByDescending(g => g.SumWeight);
+            }
 
             return new SearchResult<Group>
             {
                 Total = (int)result.Count(),
                 Page = page,
-                Results = result
+                PageSize = pageSize,
+                Results = result.Skip(pageNumber * pageSize).Take(pageSize)
             };
         }
 

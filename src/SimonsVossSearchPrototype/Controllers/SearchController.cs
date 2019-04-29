@@ -51,7 +51,7 @@ namespace SimonsVossSearchPrototype.Controllers
 
         // GET api/search/locks/0a1e6f38-6076-4da8-8d6c-87356f975baf
         [Route("buildings/{id:guid}")]
-        public async Task<IHttpActionResult> GetBuilings(Guid id)
+        public async Task<IHttpActionResult> GetBuildings(Guid id)
         {
             var collection = await Task.Run(() => _dbStorage.GetCollection<Building>("buildings"));
 
@@ -114,11 +114,11 @@ namespace SimonsVossSearchPrototype.Controllers
         // GET api/locks/search/buildings/term
         [HttpGet]
         [Route("buildings", Name ="BuildingsSearchApi")]
-        public async Task<IHttpActionResult> SearchBuildings([FromUri]string term)
+        public async Task<IHttpActionResult> SearchBuildings([FromUri]string term, int page = 1)
         {
-            var result = await _buildingService.SearchAsync(term, 1, 10);
+            var result = await _buildingService.SearchAsync(term, page, 10);
 
-            var buildings = new { count = result.Results.Count(), list = result.Results, page = result.Page, pageSize = 10 };
+            var buildings = new { result };
 
             return Ok(buildings);
         }
@@ -126,11 +126,11 @@ namespace SimonsVossSearchPrototype.Controllers
         // GET api/locks/search/term
         [HttpGet]
         [Route("locks", Name = "LocksSearchApi")]
-        public async Task<IHttpActionResult> SearchLocks([FromUri]string term)
+        public async Task<IHttpActionResult> SearchLocks([FromUri]string term, int page = 1)
         {
-            var result = await _lockService.SearchAsync(term, 1, 10);
+            var result = await _lockService.SearchAsync(term, page, 10);
 
-            var locks = new { count = result.Results.Count(), list = result.Results, page = result.Page, pageSize = 10 };
+            var locks = new { result };
 
             return Ok(locks);
         }
@@ -138,11 +138,10 @@ namespace SimonsVossSearchPrototype.Controllers
         // GET api/locks/search/term
         [HttpGet]
         [Route("groups", Name = "GroupsSearchApi")]
-        public async Task<IHttpActionResult> SearchGroups([FromUri]string term)
+        public async Task<IHttpActionResult> SearchGroups([FromUri]string term, int page = 1)
         {
-            var result = await _groupService.SearchAsync(term, 1, 10);
-
-            var groups = new { count = result.Results.Count(), list = result.Results, page = result.Page, pageSize = 10 };
+            var result = await _groupService.SearchAsync(term, page, 10);
+            var groups = new { result };
 
             return Ok(groups);
         }
@@ -150,11 +149,11 @@ namespace SimonsVossSearchPrototype.Controllers
         // GET api/locks/search/term
         [HttpGet]
         [Route("medias", Name = "MediasSearchApi")]
-        public async Task<IHttpActionResult> SearchMedias([FromUri]string term)
+        public async Task<IHttpActionResult> SearchMedias([FromUri]string term, int page = 1)
         {
-            var result = await _mediaService.SearchAsync(term, 1, 10);
+            var result = await _mediaService.SearchAsync(term, page, 10);
 
-            var medias = new { count = result.Results.Count(), list = result.Results, page = result.Page, pageSize = 10 };
+            var medias = new { result };
 
             return Ok(medias);
         }

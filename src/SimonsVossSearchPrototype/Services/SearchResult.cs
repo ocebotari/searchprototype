@@ -11,6 +11,16 @@ namespace SimonsVossSearchPrototype.Services
 
         public int Page { get; set; }
 
+        public int PageSize { get; set; }
+
+        public int PageCount
+        {
+            get
+            {
+                return Total > 0 ? (int)Math.Ceiling(Total / 10f) : 0;
+            }
+        }
+
         public IEnumerable<T> Results { get; set; }
     }
 }

@@ -26,25 +26,21 @@ namespace SimonsVossSearchPrototype.Services
                 item.Building = buildings.FirstOrDefault(b => b.Id.Equals(item.BuildingId));
             }
 
-            locks.ToList().ForEach(l => l.CalculateWeight(query));
-
-            var locksResult = locks.Where(l => l.SumWeight > 0).OrderByDescending(l => l.SumWeight);
-
-            IEnumerable<Lock> result = new List<Lock>();
+            var pageNumber = page > 0 ? page - 1 : page;
+            IEnumerable<Lock> result = locks;
             if (!string.IsNullOrWhiteSpace(query))
             {
-                result = locksResult;
-            }
-            else
-            {
-                result = locks;
+                locks.ToList().ForEach(l => l.CalculateWeight(query));
+
+                result = locks.Where(l => l.SumWeight > 0).OrderByDescending(l => l.SumWeight);
             }
 
             return new SearchResult<Lock>
             {
                 Total = (int)result.Count(),
                 Page = page,
-                Results = result
+                PageSize = pageSize,
+                Results = result.Skip(pageNumber * pageSize).Take(pageSize)
             };
         }
 
